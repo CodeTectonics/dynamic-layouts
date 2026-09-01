@@ -4,10 +4,10 @@ require "rails/generators/migration"
 
 module DynamicLayouts
   module Generators
-    class DynamicLayoutsGenerator < Rails::Generators::Base
+    class InstallGenerator < Rails::Generators::Base
       include Rails::Generators::Migration
 
-      source_root File.expand_path("templates", __dir__)
+      source_root File.expand_path("../templates", __dir__)
 
       desc "Creates the models and migrations used by a Dynamic Layout."
 
@@ -34,13 +34,12 @@ module DynamicLayouts
       end
 
       def self.next_migration_number(dirname)
-        if ActiveRecord::Base.timestamped_migrations
-          @@migration_number ||= Time.now.utc.strftime("%Y%m%d%H%M%S").to_i
-          @@migration_number += 1
-          @@migration_number.to_s
+        if @next_migration_number
+          @next_migration_number += 1
         else
-          format("%03d", current_migration_number(dirname) + 1)
+          @next_migration_number = Time.now.utc.strftime("%Y%m%d%H%M%S").to_i
         end
+        @next_migration_number.to_s
       end
     end
   end
