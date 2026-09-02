@@ -174,8 +174,9 @@ module DynamicLayouts
         res.send(scope)
       end
 
-      data_source.where("#{options[:attribute]} IS NOT NULL AND #{options[:attribute]} != ''")
-                .select("LOWER(TRIM(#{options[:attribute]})) AS formatted_value")
+      column = Arel.sql(ActiveRecord::Base.connection.quote_column_name(options[:attribute]))
+      data_source.where("#{column} IS NOT NULL AND #{column} != ''")
+                .select("LOWER(TRIM(#{column})) AS formatted_value")
                 .order(:formatted_value).distinct
                 .map do |item|
         { label: item.formatted_value.capitalize, value: item.formatted_value.capitalize }
